@@ -13,6 +13,7 @@ import React from "react";
 import { NavBarMain } from "./nav-main";
 import { data } from "@/lib/constants";
 import { RecentOpen } from "./recent-open";
+import { NavFooter } from "./nav-footer";
 
 export function AppSidebar({
   recentProjects,
@@ -21,6 +22,7 @@ export function AppSidebar({
 }: { recentProjects?: Project[] } & { user?: User } & React.ComponentProps<
     typeof Sidebar
   >) {
+  // console.log("User data:", user);
   return (
     <Sidebar
       collapsible='icon'
@@ -53,11 +55,14 @@ export function AppSidebar({
       <SidebarContent className='px-3 mt-10 gap-y-6'>
         <NavBarMain items={data.navMain} />
 
-        <RecentOpen recentProjects={recentProjects || []}/>
+        <RecentOpen recentProjects={recentProjects ?? []} />
       </SidebarContent>
 
       {/* Sidebar Footer */}
-      <SidebarFooter />
+      <SidebarFooter>
+        {/* {console.log(user)} */}
+        <NavFooter prismaUser={user}/>
+      </SidebarFooter>
     </Sidebar>
   );
 }

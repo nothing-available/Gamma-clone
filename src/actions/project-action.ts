@@ -31,7 +31,7 @@ export async function getAllProjects() {
     // Return the projects
     return { status: 200, data: projects };
   } catch (err) {
-    console.log("Error in getAllProjects:", err);
+    // console.log("Error in getAllProjects:", err);
     return { status: 500, error: "An unexpected error occurred." };
   }
 }
@@ -63,7 +63,7 @@ export async function getRecentProjects() {
     }
     return { status: 200, data: projects };
   } catch (err) {
-    console.log("Error in getRecentProjects:", err);
+    // console.log("Error in getRecentProjects:", err);
     return { status: 500, error: "An unexpected error occurred." };
   }
 }
