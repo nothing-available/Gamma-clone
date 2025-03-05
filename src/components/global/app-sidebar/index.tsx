@@ -19,7 +19,7 @@ export function AppSidebar({
   recentProjects,
   user,
   ...props
-}: { recentProjects?: Project[] } & { user?: User } & React.ComponentProps<
+}: { recentProjects: Project[] } & { user: User } & React.ComponentProps<
     typeof Sidebar
   >) {
   // console.log("User data:", user);
@@ -29,7 +29,7 @@ export function AppSidebar({
       className='max-w-[212px] bg-background-90'
       {...props}>
       {/* Sidebar Header */}
-      <SidebarHeader className='pt-6 px-3 pb-0'>
+      <SidebarHeader className='pt-6 px-2 pb-0'>
         <SidebarMenuButton
           size={"lg"}
           className='data-[state=open]:text-sidebar-accent-foreground'>
@@ -52,16 +52,15 @@ export function AppSidebar({
       </SidebarHeader>
 
       {/* Sidebar Content */}
-      <SidebarContent className='px-3 mt-10 gap-y-6'>
+      <SidebarContent className='px-2 mt-10 gap-y-6'>
         <NavBarMain items={data.navMain} />
 
-        <RecentOpen recentProjects={recentProjects ?? []} />
+        <RecentOpen recentProjects={recentProjects} />
       </SidebarContent>
 
       {/* Sidebar Footer */}
       <SidebarFooter>
-        {/* {console.log(user)} */}
-        <NavFooter prismaUser={user}/>
+        <NavFooter prismaUser={user} />
       </SidebarFooter>
     </Sidebar>
   );

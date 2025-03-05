@@ -69,9 +69,7 @@ export function RecentOpen({ recentProjects }: Props) {
       </SidebarMenu>
     </SidebarGroup>
   ) : (
-    <div className='p-4 text-sm text-muted-foreground'>
-      No recent projects. Create a new one!
-    </div>
+    ""
   );
 }
 
