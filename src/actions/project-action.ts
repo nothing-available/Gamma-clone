@@ -91,7 +91,34 @@ export async function recoverProject(projectId: string) {
 
     return { status: 200, data: updateProject };
   } catch (err) {
-    console.error("Errorin recoverProject:", err);
+    console.error("Error in recoverProject:", err);
     return { status: 500, error: "An unexpected error occurred." };
+  }
+}
+
+export async function deleteProject(projectId: string) {
+  try {
+    const checkUser = await onAuthenticateUser();
+
+    if (checkUser.status !== 200 || !checkUser.user) {
+      return { status: 403, error: "user not authenticate" };
+    }
+
+    const updateProject = await prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    if (!updateProject) {
+      return { status: 500, error: "Failed to delete project" };
+    }
+    return { status: 200, data: updateProject };
+  } catch (err) {
+    console.error("Error in Delete Project", err);
+    return { status: 500, error: "An unexpected error occurred" };
   }
 }

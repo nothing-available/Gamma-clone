@@ -11,12 +11,12 @@ import { useState } from "react";
 import { AlertDailogBox } from "../alert-dailog-box";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { deleteProject, recoverProject } from "@/actions/project-action";
 
 type Props = {
   projectId: string;
   title: string;
   createdAt: string;
-  src: string;
   isDeleted?: boolean;
   slideData: JsonValue;
   themeName: string;
@@ -26,7 +26,6 @@ export function ProjectCard({
   createdAt,
   projectId,
   slideData,
-  src,
   title,
   isDeleted,
   themeName,
@@ -51,6 +50,56 @@ export function ProjectCard({
       setloading(false);
       toast("Error", {
         description: "Project not found",
+      });
+      return;
+    }
+    try {
+      const res = await recoverProject(projectId);
+      if (res.status !== 200) {
+        toast.error("Oops!", {
+          description: res.error || "Something went wrong",
+        });
+        return;
+      }
+      setopen(false);
+      router.refresh();
+      toast.success("Success", {
+        description: "Project recovered successfully",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Oops!", {
+        description: "Something went wrong. Please contact support",
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    setloading(true);
+    if (!projectId) {
+      setloading(false);
+      toast.error("Error", {
+        description: "Project not found",
+      });
+      return;
+    }
+    try {
+      const res = await deleteProject(projectId);
+      if (res.status !== 200) {
+        toast.error("Oops!", {
+          description: res.error || "Failed to delete",
+        });
+        return;
+      }
+      setopen(false);
+      router.refresh();
+      toast.success("Success", {
+        description: "Project delete sucessfull",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Oops!", {
+        description: "Something went wrong. Please contact support",
       });
     }
   };
@@ -81,6 +130,7 @@ export function ProjectCard({
                 suppressHydrationWarning>
                 {timeAgo(createdAt)}
               </p>
+
               {isDeleted ? (
                 <AlertDailogBox
                   description='This will recover your project and restore your data.'
@@ -98,7 +148,21 @@ export function ProjectCard({
                   </Button>
                 </AlertDailogBox>
               ) : (
-                ""
+                <AlertDailogBox
+                  description='This will delete your project and send it to trash'
+                  clasName='bg-red-500 text-white dark:bg-red-600 hover:bg:red-600 dark:hover:bg-red-700'
+                  loading={loadng}
+                  open={open}
+                  onClick={handleDelete}
+                  handleOpen={() => setopen(!open)}>
+                  <Button
+                    size={"sm"}
+                    variant={"ghost"}
+                    disabled={loadng}
+                    className='bg-background-80 dark:hover:bg-background-90'>
+                    Delete
+                  </Button>
+                </AlertDailogBox>
               )}
             </div>
           </div>

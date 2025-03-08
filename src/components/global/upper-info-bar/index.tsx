@@ -1,7 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { User } from "@prisma/client";
-import React from "react";
 import { UpperInfoSearchBar } from "./upper-info-searchbar";
 import { ThemeToggle } from "@/components/global/mode-toggle/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { NewProjectButton } from "./new-project-button";
 
 type Props = {
   user: User;
-  childeren: React.ReactNode;
 };
 
 export function UpperInfoBar({ user }: Props) {

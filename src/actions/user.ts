@@ -72,7 +72,7 @@ export async function onAuthenticateUser(): Promise<UserResponse> {
     // If user creation fails, return a 400 status
     return { status: 400, error: "Failed to create user" };
   } catch (err) {
-    // console.log("Error in onAuthenticateUser:", err);
+    console.log("Error in onAuthenticateUser:", err);
     return { status: 500, error: "Internal server error" };
   }
 }

@@ -1,6 +1,24 @@
-/**
- * Represents a slide in a presentation or document.
- */
+import { Prisma } from "@prisma/client";
+
+export type PrismaUser = Prisma.UserGetPayload<{
+  include: { PurchasedProjects: true };
+}>;
+export interface OutlineCard {
+  title: string;
+  id: string;
+  order: number;
+}
+
+export interface OutlineState {
+  cards: OutlineCard[];
+}
+
+export interface LayoutSlides {
+  slideName: string;
+  content: ContentItem;
+  className?: string;
+  type: string;
+}
 
 export interface Slide {
   id: string;
@@ -10,11 +28,6 @@ export interface Slide {
   slideOrder: number;
   className?: string;
 }
-
-/**
- * Represents a single piece of content within a slide.
- */
-
 export interface ContentItem {
   id: string;
   type: ContentType;
@@ -35,9 +48,11 @@ export interface ContentItem {
   isTransparent?: boolean;
 }
 
-/**
- * Defines all possible types of content.
- */
+export interface DragItem {
+  id: string;
+  type: string;
+  elementOrder: number;
+}
 
 export type ContentType =
   | "column"
@@ -81,4 +96,30 @@ export interface Theme {
   sidebarColor?: string;
   navbarColor?: string;
   type: "light" | "dark";
+}
+
+export interface LayoutGroup {
+  name: string;
+  layouts: Layout[];
+}
+
+export interface Layout {
+  name: string;
+  icon: React.FC;
+  type: string;
+  component: LayoutSlides;
+  layoutType: string;
+}
+
+export interface ComponentGroup {
+  name: string;
+  components: Component[];
+}
+
+interface Component {
+  name: string;
+  icon: string;
+  type: string;
+  component: ContentItem;
+  componentType: string;
 }

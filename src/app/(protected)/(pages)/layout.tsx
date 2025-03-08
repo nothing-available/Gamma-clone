@@ -10,22 +10,25 @@ type Props = {
 };
 
 export default async function PagesLayout({ children }: Props) {
+  // Fetch recent projects and authenticate user
   const recentProjects = await getRecentProjects();
   const checkuser = await onAuthenticateUser();
 
+  // Redirect if user is not authenticated
   if (!checkuser.user) {
     redirect("/sign-in");
   }
 
+  // Render the layout
   return (
     <SidebarProvider>
       <AppSidebar
         user={checkuser.user}
         recentProjects={recentProjects.data || []}
       />
-
       <SidebarInset>
-        <UpperInfoBar user={checkuser.user}/>{children}
+        <UpperInfoBar user={checkuser.user} />
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );
