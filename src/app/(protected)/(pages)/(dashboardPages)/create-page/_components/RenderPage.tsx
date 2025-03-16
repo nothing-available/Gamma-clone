@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import CreatePage from "./CreatePage/CreatePage";
 import CreateAI from "./Generate-AI/CreateAI";
+import ScratchPage from "./Scratch/ScratchPage";
 
 export default function RenderPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function RenderPage() {
 
   const handleBack = () => {
     setpage("create");
-  }
+  };
 
   const handleSelectOption = (option: string) => {
     if (option === "template") {
@@ -29,9 +30,9 @@ export default function RenderPage() {
       case "create":
         return <CreatePage onSelectOption={handleSelectOption} />;
       case "creative-ai":
-        return <CreateAI onBack={handleBack}/>;
+        return <CreateAI onBack={handleBack} />;
       case "create-scratch":
-        return <></>;
+        return <ScratchPage onBack={handleBack} />;
 
       default:
         return null;
