@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { onAuthenticateUser } from "./user";
+import { OutlineCard } from "@/lib/types";
 
 export async function getAllProjects() {
   try {
@@ -122,3 +123,36 @@ export async function deleteProject(projectId: string) {
     return { status: 500, error: "An unexpected error occurred" };
   }
 }
+
+export const createProject = async (title: string, outlines: OutlineCard[]) => {
+  try {
+    if (!title || !outlines || outlines.length === 0) {
+      return { status: 400, error: "Title and outlines are required" };
+    }
+
+    const allOutlines = outlines.map((outline) => outline.title);
+    const checkUser = await onAuthenticateUser();
+    if (checkUser.status !== 200 || !checkUser.user) {
+      return { status: 403, error: "User not authenticate" };
+    }
+
+    const project = await prisma.project.create({
+      data: {
+        title,
+        outline: allOutlines,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: checkUser.user.id,
+      },
+    });
+
+    if (!project) {
+      return { status: 500, error: "Failed to create project" };
+    }
+
+    return { status: 200, data: project };
+  } catch (err) {
+    console.error("Error in createProject", err);
+    return { status: 500, error: "An unexpected error occurred" };
+  }
+};

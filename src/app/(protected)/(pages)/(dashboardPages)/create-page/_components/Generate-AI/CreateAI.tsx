@@ -14,12 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CardList from "../Common/CardList";
 import usePromptStore from "@/store/usePromptStore";
 import RecentPrompt from "./RecentPrompt";
 import { toast } from "sonner";
 import { generateCreativePrompt } from "@/actions/openAi";
+import { OutlineCard } from "@/lib/types";
+import { v4 as uuid } from "uuid";
 
 type Props = {
   onBack: () => void;
@@ -67,9 +69,36 @@ const CreateAI = ({ onBack }: Props) => {
     setisGenerating(true);
 
     const res = await generateCreativePrompt(currentAiPrompt);
+    if (res.status === 200 && res?.data?.outline) {
+      const cardsData: OutlineCard[] = [];
+      res.data?.outline.map((outline: string, idx: number) => {
+        const newCard = {
+          id: uuid(),
+          title: outline,
+          order: idx + 1,
+        };
+        cardsData.push(newCard);
+      });
+      addMultipleOutlines(cardsData);
+      setnoOfCards(cardsData.length);
+      toast.success('Success', {
+        description: 'Outline generated successfully'
+      });
+    } else {
+      toast.error('Error', {
+        description: 'Failed to generate outline'
+      });
+    }
+    setisGenerating(false);
   };
 
   const handleGenerate = () => { };
+
+  useEffect(() => {
+    setnoOfCards(outlines.length);
+  }, [outlines.length]);
+
+  // const handleGenerate = () => { };
 
   return (
     <motion.div
