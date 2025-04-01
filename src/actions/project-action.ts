@@ -156,3 +156,25 @@ export const createProject = async (title: string, outlines: OutlineCard[]) => {
     return { status: 500, error: "An unexpected error occurred" };
   }
 };
+
+export const getProjectById = async (projectId: string) => {
+  try {
+    const checkUser = await onAuthenticateUser();
+    if (checkUser.status !== 200 || !checkUser.user) {
+      return { status: 403, error: "User not authenticate" };
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+    if (!project) {
+      return { status: 404, error: "Project not found" };
+    }
+    return { status: 200, data: project };
+  } catch (err) {
+    console.error("Error in getProjectById", err);
+    return { status: 500, error: "An unexpected error occurred" };
+  }
+};

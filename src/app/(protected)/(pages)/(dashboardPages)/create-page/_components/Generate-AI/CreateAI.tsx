@@ -19,9 +19,11 @@ import CardList from "../Common/CardList";
 import usePromptStore from "@/store/usePromptStore";
 import RecentPrompt from "./RecentPrompt";
 import { toast } from "sonner";
-import { generateCreativePrompt } from "@/actions/openAi";
+import { generateCreativePrompt } from "@/actions/ai";
 import { OutlineCard } from "@/lib/types";
-import { v4 as uuid } from "uuid";
+import { v4 as uuid, v4 } from "uuid";
+import { createProject } from "@/actions/project-action";
+import { useSlideStore } from "@/store/useSlideStore";
 
 type Props = {
   onBack: () => void;
@@ -29,7 +31,7 @@ type Props = {
 
 const CreateAI = ({ onBack }: Props) => {
   const router = useRouter();
-
+  const { setProject } = useSlideStore();
   const [editingCard, seteditingCard] = useState<string | null>(null);
   const [isGenerating, setisGenerating] = useState(false);
   const [selectedCard, setselectedCard] = useState<string | null>(null);
@@ -92,7 +94,50 @@ const CreateAI = ({ onBack }: Props) => {
     setisGenerating(false);
   };
 
-  const handleGenerate = () => { };
+  const handleGenerate = async () => {
+    setisGenerating(true);
+
+    if (outlines.length === 0) {
+      toast.error('Error', {
+        description: 'Please add at least one card to generate slides',
+      });
+      return;
+    }
+    try {
+      const res = await createProject(
+        currentAiPrompt,
+        outlines.slice(0, noOfCards)
+      );
+      if (res.status !== 200 || !res.data) {
+        throw new Error('Failed to create project');
+      }
+
+      router.push(`/presentation/${res.data.id}/select-theme`);
+      setProject(res.data);
+
+      addPrompt({
+        id: v4(),
+        title: currentAiPrompt || outlines?.[0]?.title,
+        outlines: outlines,
+        createdAt: new Date().toISOString(),
+      });
+
+      toast.success("Success", {
+        description: "Project created successfully",
+      });
+
+      setCurrentAiPrompt("");
+      resetOutlines();
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Error", {
+        description: "Failed to create project",
+      });
+    } finally {
+      setisGenerating(false);
+    }
+  };
 
   useEffect(() => {
     setnoOfCards(outlines.length);
